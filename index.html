@@ -6,13 +6,15 @@
   <title>Nepal Quiz mit Antworten zeigen</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gradient-to-br from-pink-200 to-yellow-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gradient-to-br from-pink-200 to-yellow-100 min-h-screen flex flex-col items-center justify-center p-4">
 
   <div class="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full text-center">
     <h1 class="text-2xl font-bold mb-4">Nepal Quiz</h1>
     <button id="generateBtn" class="bg-pink-600 text-white w-full text-lg px-6 py-4 rounded-xl shadow hover:bg-pink-700 transition mb-4">
       Neue Frage
     </button>
+
+    <div id="timer" class="mb-4 text-xl font-semibold text-pink-700 hidden">30</div>
 
     <div id="questionContainer" class="mt-6 hidden">
       <h2 id="questionText" class="text-lg font-semibold mb-4"></h2>
@@ -23,8 +25,13 @@
     </div>
   </div>
 
+  <footer class="mt-6 text-center text-gray-600 select-none">
+    Made with <span class="text-red-500">♥️</span> by Class 6A from LGW
+  </footer>
+
   <script>
     const questions = [
+      // Thema 1: Essen in Nepal
       {
         question: "Was ist das Nationalgericht Nepals?",
         answers: ["Roti", "Dal Bhat", "Thukpa", "Momo"],
@@ -40,7 +47,93 @@
         answers: ["Samosa", "Momo", "Naan", "Chow Mein"],
         correct: "Momo"
       },
-      // ... weitere Fragen hier
+      {
+        question: "Was ist „Gundruk“?",
+        answers: ["Eine Süßspeise", "Fermentiertes Blattgemüse", "Ein Getränk", "Ein Brot"],
+        correct: "Fermentiertes Blattgemüse"
+      },
+      {
+        question: "Was trinkt man in Nepal häufig zum Essen?",
+        answers: ["Kaffee", "Cola", "Chiya (Tee)", "Kakao"],
+        correct: "Chiya (Tee)"
+      },
+      {
+        question: "Welches Gericht stammt aus der tibetischen Küche, ist aber auch in Nepal sehr beliebt?",
+        answers: ["Aloo Tama", "Thukpa", "Chatamari", "Sekuwa"],
+        correct: "Thukpa"
+      },
+      {
+        question: "Was ist „Sel Roti“?",
+        answers: ["Ein Linsencurry", "Ein scharfes Gericht", "Ein süßer Reiskringel", "Ein frittiertes Gemüse"],
+        correct: "Ein süßer Reiskringel"
+      },
+      {
+        question: "Was ist 'Achar' in der nepalesischen Küche?",
+        answers: ["Ein Fleischgericht", "Eine Suppe", "Eine Art Chutney oder Pickle", "Ein Brot"],
+        correct: "Eine Art Chutney oder Pickle"
+      },
+      {
+        question: "Welche Getreidesorte wird in Nepal häufig für Brot verwendet?",
+        answers: ["Mais", "Reis", "Hirse", "Gerste"],
+        correct: "Hirse"
+      },
+      {
+        question: "Was ist ein typisches Frühstück in Nepal?",
+        answers: ["Pancakes", "Tee und Brot oder Reissnacks", "Pizza", "Suppe"],
+        correct: "Tee und Brot oder Reissnacks"
+      },
+
+      // Thema 2: Religion in Nepal
+      {
+        question: "Welche Religion ist in Nepal am weitesten verbreitet?",
+        answers: ["Hinduismus", "Buddhismus", "Islam", "Christentum"],
+        correct: "Hinduismus"
+      },
+      {
+        question: "Was ist der zweithäufigste Glaube in Nepal?",
+        answers: ["Islam", "Buddhismus", "Sikhismus", "Judentum"],
+        correct: "Buddhismus"
+      },
+      {
+        question: "Welcher Gott ist in Nepal besonders beliebt?",
+        answers: ["Shiva", "Odin", "Zeus", "Ahura Mazda"],
+        correct: "Shiva"
+      },
+      {
+        question: "Wie heißt das wichtigste Hindu-Fest in Nepal?",
+        answers: ["Dashain", "Ramadan", "Weihnachten", "Diwali"],
+        correct: "Dashain"
+      },
+      {
+        question: "Welche Stadt gilt als Geburtsort von Buddha?",
+        answers: ["Lumbini", "Pokhara", "Kathmandu", "Patan"],
+        correct: "Lumbini"
+      },
+      {
+        question: "Wie heißt die Gebetsmühle, die im Buddhismus verwendet wird?",
+        answers: ["Mandala", "Chorten", "Mani-Rad", "Stupa"],
+        correct: "Mani-Rad"
+      },
+      {
+        question: "Was bedeutet das Om-Zeichen?",
+        answers: ["Ein religiöses Verbot", "Ein heiliges Symbol im Hinduismus und Buddhismus", "Eine Schriftart", "Eine Zahl"],
+        correct: "Ein heiliges Symbol im Hinduismus und Buddhismus"
+      },
+      {
+        question: "Was ist ein „Stupa“?",
+        answers: ["Ein Wohnhaus", "Ein buddhistischer Schrein", "Ein Kleidungsstück", "Ein Tanz"],
+        correct: "Ein buddhistischer Schrein"
+      },
+      {
+        question: "Welche Rolle spielen Kühe im Hinduismus in Nepal?",
+        answers: ["Keine besondere Rolle", "Sie gelten als heilig", "Sie werden geopfert", "Man reitet sie"],
+        correct: "Sie gelten als heilig"
+      },
+      {
+        question: "Was ist „Puja“?",
+        answers: ["Eine Musikrichtung", "Eine religiöse Zeremonie oder Gebet", "Eine Süßspeise", "Ein Kleidungsstück"],
+        correct: "Eine religiöse Zeremonie oder Gebet"
+      }
     ];
 
     const generateBtn = document.getElementById('generateBtn');
@@ -48,8 +141,12 @@
     const questionContainer = document.getElementById('questionContainer');
     const questionText = document.getElementById('questionText');
     const answersList = document.getElementById('answersList');
+    const timerDisplay = document.getElementById('timer');
 
     let currentQuestion = null;
+    let timer;
+    let timeLeft = 30;
+    let timerRunning = false;
 
     function resetAnswersStyle() {
       [...answersList.children].forEach(li => {
@@ -58,7 +155,41 @@
       });
     }
 
+    function startTimer() {
+      timeLeft = 30;
+      timerDisplay.textContent = timeLeft;
+      timerDisplay.classList.remove('hidden');
+      timerRunning = true;
+
+      timer = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          timerRunning = false;
+          timerDisplay.textContent = "Zeit abgelaufen!";
+          showAnswersBtn.click(); // Antworten automatisch zeigen, wenn Zeit abgelaufen
+          showAnswersBtn.disabled = true;
+          generateBtn.disabled = false;
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      clearInterval(timer);
+      timerRunning = false;
+      timerDisplay.classList.add('hidden');
+    }
+
     generateBtn.addEventListener('click', () => {
+      // Falls Timer noch läuft, stoppen
+      if (timerRunning) {
+        stopTimer();
+      }
+      showAnswersBtn.disabled = false;
+      generateBtn.disabled = true;
+
       // Zufällige Frage auswählen
       const randomIndex = Math.floor(Math.random() * questions.length);
       currentQuestion = questions[randomIndex];
@@ -81,9 +212,15 @@
 
       // Antwortfarben zurücksetzen
       resetAnswersStyle();
+
+      // Timer starten
+      startTimer();
     });
 
     showAnswersBtn.addEventListener('click', () => {
+      // Timer stoppen falls noch aktiv
+      if(timerRunning) stopTimer();
+
       [...answersList.children].forEach(li => {
         if (li.textContent === currentQuestion.correct) {
           li.classList.add('bg-green-200', 'font-semibold');
@@ -93,9 +230,11 @@
           li.classList.remove('cursor-pointer');
         }
       });
+
+      showAnswersBtn.disabled = true;
+      generateBtn.disabled = false;
     });
   </script>
 
 </body>
 </html>
-
