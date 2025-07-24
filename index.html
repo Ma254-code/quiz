@@ -145,7 +145,7 @@
 
     let currentQuestion = null;
     let timer;
-    let timeLeft = 30;
+    let timeLeft = 15;
     let timerRunning = false;
 
     function resetAnswersStyle() {
@@ -156,7 +156,7 @@
     }
 
     function startTimer() {
-      timeLeft = 30;
+      timeLeft = 15;
       timerDisplay.textContent = timeLeft;
       timerDisplay.classList.remove('hidden');
       timerRunning = true;
